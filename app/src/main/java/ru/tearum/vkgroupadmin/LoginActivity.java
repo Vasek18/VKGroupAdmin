@@ -55,11 +55,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             case R.id.btnLogin:
 
                 // логин
-//                String scope = ""; // ???
-//                VKSdk.login(this, scope);
-
-//                pushTokenOnServer();
-                new LongOperation().execute();
+                String scope = "offline, groups"; // пермишионы
+                VKSdk.login(this, scope);
 
                 break;
             default:
@@ -77,9 +74,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 //                Log.d(LOG_TAG, "Token = " + res.accessToken);
 
-                // идём на главное активити
-//                Intent intent = new Intent(getBaseContext(), MainActivity.class);
-//                startActivity(intent);
+                // здесь мы пушим на сервер токен
+                new LongOperation().execute();
             }
 
             @Override
@@ -94,15 +90,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // отправка токена на сервак
     public void pushTokenOnServer() {
         Log.d(LOG_TAG, "pushTokenOnServer");
-        Log.d(LOG_TAG, request("http://av-promo.ru/http-test/test.php"));
+        Log.d(LOG_TAG, request("https://api.vk.com/method/groups.getById?group_ids=123&v=5.37"));
+
+        // идём на главное активити
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        startActivity(intent);
     }
 
     private String request(String sUrl) {
         String answer = "";
         try {
-            URL url = new URL("http://av-promo.ru/http-test/test.php");
+            URL url = new URL(sUrl);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestMethod("POST");
+//            urlConnection.setRequestMethod("POST");
 //            Log.d(LOG_TAG, "Connect");
 
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
