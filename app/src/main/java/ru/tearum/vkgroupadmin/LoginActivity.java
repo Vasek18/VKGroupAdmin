@@ -19,6 +19,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -92,33 +93,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     // отправка токена на сервак
     public void pushTokenOnServer() {
-//        String answer = String.valueOf(request("http://av-promo.ru/http-test/test.php"));
-//        Log.d(LOG_TAG, answer);
-        request();
+        Log.d(LOG_TAG, "pushTokenOnServer");
+        Log.d(LOG_TAG, request("http://av-promo.ru/http-test/test.php"));
     }
 
-    private StringBuffer request() {
-        StringBuffer chaine = new StringBuffer("");
+    private String request(String sUrl) {
+        String answer = "";
         try {
             URL url = new URL("http://av-promo.ru/http-test/test.php");
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            Log.d(LOG_TAG, "Connect");
-//            connection.setRequestProperty("User-Agent", "");
-//            connection.setRequestMethod("POST");
-//            connection.setDoInput(true);
-//            connection.connect();
-
-//            InputStream inputStream = connection.getInputStream();
-//
-//            BufferedReader rd = new BufferedReader(urlConnection.getInputStream());
-//            String line = "";
-
-//            while ((line = rd.readLine()) != null) {
-//                chaine.append(line);
-//            }
+            urlConnection.setRequestMethod("POST");
+//            Log.d(LOG_TAG, "Connect");
 
             InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-//            readStream(in);
+//            Log.d(LOG_TAG, readStream(in));
+            answer = readStream(in);
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -128,7 +117,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //            urlConnection.disconnect();
         }
 
-        return chaine;
+        return answer;
     }
 
     private class LongOperation extends AsyncTask<Void, Void, Void> {
@@ -151,6 +140,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected void onProgressUpdate(Void... values) {
+            Log.d(LOG_TAG, "on_progress_async");
+        }
+    }
+
+    private String readStream(InputStream is) {
+        try {
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            int i = is.read();
+            while (i != -1) {
+                bo.write(i);
+                i = is.read();
+            }
+            return bo.toString();
+        } catch (IOException e) {
+            return "";
         }
     }
 }
