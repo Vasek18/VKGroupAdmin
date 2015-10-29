@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        Log.d(LOG_TAG, VKApiConst.OWNER_ID);
 
-        /*VKRequest request = VKApi.users().get();
+        VKRequest request = VKApi.users().get();
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
 //I don't really believe in progress
             }
-        });*/
+        });
     }
 
     @Override
