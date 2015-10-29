@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">VKGroupAdmin</string>
+    <integer name="com_vk_sdk_AppId">5123923</integer>
+    <string name="title_activity_login">LoginActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+</resources>
