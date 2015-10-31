@@ -35,8 +35,6 @@ public class MainActivity extends AppCompatActivity {
 //        String scope = "test"; // ???
 //        VKSdk.login(this, scope);
 
-//        Log.d(LOG_TAG, VKApiConst.OWNER_ID);
-
         VKRequest request = VKApi.users().get();
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override

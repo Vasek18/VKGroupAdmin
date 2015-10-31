@@ -65,6 +65,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
+    // здесь мы отлавливаем колбек логина вк
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
@@ -72,10 +73,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onResult(VKAccessToken res) {
                 VK_USER_ID = res.userId;
 
-//                Log.d(LOG_TAG, "Token = " + res.accessToken);
+//                Log.d(LOG_TAG, "accessToken = " + res.accessToken);
 
                 // здесь мы пушим на сервер токен
-                new LongOperation().execute();
+                new LongOperation().execute(res.userId, res.accessToken);
             }
 
             @Override
@@ -88,13 +89,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     // отправка токена на сервак
-    public void pushTokenOnServer() {
+    public void pushTokenOnServer(String id, String token) {
         Log.d(LOG_TAG, "pushTokenOnServer");
-        Log.d(LOG_TAG, request("https://api.vk.com/method/groups.getById?group_ids=123&v=5.37"));
+        Log.d(LOG_TAG, request("http://vkadveyj.bget.ru/reg.php?idvk="+id+"&token="+token));
 
         // идём на главное активити
-        Intent intent = new Intent(getBaseContext(), MainActivity.class);
-        startActivity(intent);
+//        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+//        startActivity(intent);
     }
 
     private String request(String sUrl) {
@@ -120,10 +121,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return answer;
     }
 
-    private class LongOperation extends AsyncTask<Void, Void, Void> {
+    private class LongOperation extends AsyncTask<String, Void, Void> {
         @Override
-        protected Void doInBackground(Void... params) {
-            pushTokenOnServer();
+        // асинхронный код
+        protected Void doInBackground(String... params) {
+//            Log.d(LOG_TAG, "One " + params[0]);
+//            Log.d(LOG_TAG, "Two " + params[1]);
+            String id = params[0];
+            String token = params[1];
+            pushTokenOnServer(id, token);
 //            Log.d(LOG_TAG, "async");
             return null;
         }
@@ -144,6 +150,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    // стрим в строку
     private String readStream(InputStream is) {
         try {
             ByteArrayOutputStream bo = new ByteArrayOutputStream();
