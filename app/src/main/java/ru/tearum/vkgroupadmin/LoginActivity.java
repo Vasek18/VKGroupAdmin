@@ -94,8 +94,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Log.d(LOG_TAG, request("http://vkadveyj.bget.ru/reg.php?idvk="+id+"&token="+token));
 
         // идём на главное активити
-//        Intent intent = new Intent(getBaseContext(), MainActivity.class);
-//        startActivity(intent);
+        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        startActivity(intent);
     }
 
     private String request(String sUrl) {
