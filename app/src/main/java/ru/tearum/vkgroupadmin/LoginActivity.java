@@ -1,13 +1,14 @@
 package ru.tearum.vkgroupadmin;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
-import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -19,31 +20,27 @@ import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Button btnLogin;
+    ImageButton btnLogin;
     public java.lang.String VK_USER_ID;
     private static final String LOG_TAG = "myLogs";
 
     public VKAccessToken VKAccessTokenRes; // для передачи ответа от входа в вк дальше в запрос про группы
+
+    SharedPreferences sPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +48,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // если мы уже логинелись - сразу уходиим на другое активити
+        if (isIDAndTokenInPrefs()){
+            // идём на главное активити
+            Intent intent = new Intent(getBaseContext(), MainActivity.class);
+            startActivity(intent);
+        }
+
         // объявляем элементы
-        btnLogin = (Button) findViewById(R.id.btnLogin);
+        btnLogin = (ImageButton) findViewById(R.id.btnLogin);
 
         // привязываем слушители событий
         btnLogin.setOnClickListener(this);
@@ -145,11 +149,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         Log.d(LOG_TAG, query);
         request("http://vkadveyj.bget.ru/reg.php?" + query);
 
+        // сохранение токена и id в Preferences
+        putIDAndTokenInPrefs(id, token);
+
         // идём на главное активити
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         startActivity(intent);
     }
 
+    // апрос на внешний сервак по урлу (так что поддерживает гет)
     private String request(String sUrl) {
         String answer = "";
         try {
@@ -221,5 +229,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } catch (IOException e) {
             return "";
         }
+    }
+
+    public void putIDAndTokenInPrefs(String id, String token) {
+        Log.d(LOG_TAG, "Кладём в преференсес");
+        sPref = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putString("id", id);
+        ed.putString("token", token);
+        ed.commit();
+    }
+
+    public Boolean isIDAndTokenInPrefs() {
+        Log.d(LOG_TAG, "Ищем в преференсес");
+        sPref = getPreferences(MODE_PRIVATE);
+        String id = sPref.getString("id", "");
+        String token = sPref.getString("token", "");
+        if ((id != null && !id.isEmpty()) && (token != null && !token.isEmpty())) {
+            return true;
+        }
+        return false;
     }
 }
