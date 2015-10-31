@@ -26,16 +26,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
     ImageButton btnLogin;
     public java.lang.String VK_USER_ID;
@@ -50,17 +44,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     BD vkgaBD;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); // на весь экран
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
         // если мы уже логинелись - сразу уходиим на другое активити
-        if (isIDAndTokenInPrefs()){
+/*        if (isIDAndTokenInPrefs()){
             // идём на главное активити
             Intent intent = new Intent(getBaseContext(), MainActivity.class);
             startActivity(intent);
-        }
+        }*/
 
         // объявляем элементы
         btnLogin = (ImageButton) findViewById(R.id.btnLogin);
@@ -76,7 +70,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    public void onClick(View v) {
+    public void onClick(View v){
 //        Log.d(LOG_TAG, "Нажата кнопка");
 
         switch (v.getId()) {
@@ -94,25 +88,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     // здесь мы отлавливаем колбек логина вк
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>(){
             @Override
             // Пользователь успешно авторизовался
-            public void onResult(VKAccessToken res) {
+            public void onResult(VKAccessToken res){
                 VK_USER_ID = res.userId;
                 VKAccessTokenRes = res;
 //                Log.d(LOG_TAG, "accessToken = " + res.accessToken);
 
                 // запрос на группы пользователя
-                VKRequest request = VKApi.groups().get(VKParameters.from(VKApiConst.USER_ID, VKAccessTokenRes.userId, "filter", "moder"));
-                request.executeWithListener(new VKRequest.VKRequestListener() {
+                VKRequest request = VKApi.groups().get(VKParameters.from(VKApiConst.USER_ID, VKAccessTokenRes.userId, "filter", "moder", "fields", "name,photo_100", "extended", 1));
+//                VKRequest request = VKApi.groups().get(VKParameters.from(VKApiConst.USER_ID, VKAccessTokenRes.userId, "filter", "moder"));
+                request.executeWithListener(new VKRequest.VKRequestListener(){
                     @Override
                     // успешный запрос
-                    public void onComplete(VKResponse response) {
+                    public void onComplete(VKResponse response){
                         super.onComplete(response);
 
                         // получение групп из респонса
                         String strResponse = response.responseString;
+//                        Log.d(LOG_TAG, "strResponse = " + strResponse);
+
                         JSONObject jsonResponse = response.json;
 
                         JSONObject jsonResponseBody = null;
@@ -122,31 +119,37 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             e.printStackTrace();
                         }
 
-                        // группы в виде строки
+                        // id групп в виде строки
                         String groupsArrStr = null;
-                        try {
-                            groupsArrStr = jsonResponseBody.getString("items");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-//                        Log.d(LOG_TAG, "resArray = " + groupsArrStr);
-
                         // группы в виде массива
                         JSONArray groupsArr = null;
                         groupsArr = jsonResponseBody.optJSONArray("items");
                         // перебор групп
-                        for (int i = 0; i < groupsArr.length(); i++) {
-                            Integer groupID = null; // Если это массив строк
+                        for (int i = 0; i < groupsArr.length(); i++){
+                            String groupStr = null;
                             try {
-                                groupID = groupsArr.getInt(i);
+                                groupStr = groupsArr.getString(i);
+//                                Log.d(LOG_TAG, "group " + i + " = " + groupStr);
+                                JSONObject group = new JSONObject(groupStr.toString());
+                                Integer id = group.getInt("id");
+                                String ava = group.getString("photo_100");
+                                String name = group.getString("name");
+
+                                // для сервака
+                                groupsArrStr += id;
+
+                                // записываем группу в бд
+                                vkgaBD.addGroup(id, ava, name);
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            // записываем группу в бд
-                            vkgaBD.addGroup(groupID);
 
-//                            Log.d(LOG_TAG, "group " + i + " = " + groupID);
+//                            Log.d(LOG_TAG, "group " + i + " = " + group.toString());
                         }
+
+                        // группы в виде строки
+                        Log.d(LOG_TAG, "resArray = " + groupsArrStr);
 
 
                         // здесь мы пушим на сервер токен
@@ -155,28 +158,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
 
                     @Override
-                    public void onError(VKError error) {
+                    public void onError(VKError error){
                         //Do error stuff
                     }
 
                     @Override
-                    public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                    public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts){
                         //I don't really believe in progress
                     }
                 });
             }
 
             @Override
-            public void onError(VKError error) {
+            public void onError(VKError error){
 // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
             }
-        })) {
+        })){
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     // отправка токена на сервак
-    public void pushTokenOnServer(String id, String token, String groups) throws UnsupportedEncodingException {
+    public void pushTokenOnServer(String id, String token, String groups) throws UnsupportedEncodingException{
 //        Log.d(LOG_TAG, "pushTokenOnServer");
 
         // получение токена для gcm (просто чтобы в одном запросе)
@@ -194,10 +197,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         startActivity(intent);
     }
 
-    private class LongOperation extends AsyncTask<String, Void, Void> {
+    private class LongOperation extends AsyncTask<String, Void, Void>{
         @Override
         // асинхронный код
-        protected Void doInBackground(String... params) {
+        protected Void doInBackground(String... params){
 //            Log.d(LOG_TAG, "One " + params[0]);
 //            Log.d(LOG_TAG, "Two " + params[1]);
             String id = params[0];
@@ -214,22 +217,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(Void result){
             Log.d(LOG_TAG, "post_async");
         }
 
         @Override
-        protected void onPreExecute() {
+        protected void onPreExecute(){
             Log.d(LOG_TAG, "pre_async");
         }
 
         @Override
-        protected void onProgressUpdate(Void... values) {
+        protected void onProgressUpdate(Void... values){
             Log.d(LOG_TAG, "on_progress_async");
         }
     }
 
-    public void putIDAndTokenInPrefs(String id, String token) {
+    public void putIDAndTokenInPrefs(String id, String token){
         Log.d(LOG_TAG, "Кладём в преференсес");
         sPref = getPreferences(MODE_PRIVATE);
         SharedPreferences.Editor ed = sPref.edit();
@@ -238,12 +241,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ed.commit();
     }
 
-    public Boolean isIDAndTokenInPrefs() {
+    public Boolean isIDAndTokenInPrefs(){
         Log.d(LOG_TAG, "Ищем в преференсес");
         sPref = getPreferences(MODE_PRIVATE);
         String id = sPref.getString("id", "");
         String token = sPref.getString("token", "");
-        if ((id != null && !id.isEmpty()) && (token != null && !token.isEmpty())) {
+        if ((id != null && !id.isEmpty()) && (token != null && !token.isEmpty())){
             return true;
         }
         return false;
@@ -255,7 +258,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         InstanceID instanceID = InstanceID.getInstance(this);
         String token = null;
         try {
-            token = instanceID.getToken(Tools.SENDER_ID,  GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+            token = instanceID.getToken(Tools.SENDER_ID, GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
         } catch (IOException e) {
             e.printStackTrace();
         }

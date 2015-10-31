@@ -50,10 +50,6 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
 
         tvName = (TextView) findViewById(R.id.user_name);
 
-        // логин
-//        String scope = "offline, groups"; // пермишионы
-//        VKSdk.login(this, scope);
-
         // подключаем главный фрагмент
         mainFrag = new MainFragment();
         fTrans = getFragmentManager().beginTransaction();
@@ -64,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
         vkgaBD = new BD(this);
         vkgaBD.open();
 
-//        vkgaBD.getGroups();
+//        getGroupsData();
 
         // запрос для получения имени юзера // TODO проверка на наличие
         VKRequest request = VKApi.users().get();

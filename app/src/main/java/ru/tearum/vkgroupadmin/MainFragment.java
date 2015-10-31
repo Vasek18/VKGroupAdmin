@@ -56,7 +56,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         // вывод групп на главной
         // формируем столбцы сопоставления
-        String[] from = new String[] {"ava", "vk_id"};
+        String[] from = new String[] {"ava", "name"};
         int[] to = new int[] {R.id.ivAva, R.id.tvName};
 
         // создаем адаптер и настраиваем список

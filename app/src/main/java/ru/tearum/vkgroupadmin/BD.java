@@ -40,7 +40,8 @@ public class BD {
     }
 
     // добавление группы (только айдишник)
-    public Integer addGroup(Integer vkID) {
+    public Integer addGroup(Integer vkID, String ava, String name) {
+        Log.d(LOG_TAG, "addGroup");
         if (vkID == null) {
             Log.d(LOG_TAG, "Не пришёл vk_id");
             return null;
@@ -57,6 +58,8 @@ public class BD {
         ContentValues cv = new ContentValues();
         cv.clear();
         cv.put(COLUMN_VK_ID, vkID);
+        cv.put("name", name);
+        cv.put("ava", ava);
 
         return (int) vkgaBD.insert("groups", null, cv);
     }
