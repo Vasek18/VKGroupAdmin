@@ -61,8 +61,12 @@ public class BD {
         return (int) vkgaBD.insert("groups", null, cv);
     }
 
-    public void getGroups() {
-        Cursor c = vkgaBD.query("groups", null, null, null, null, null, null);
+    public void getTableInfo(String table) {
+        if (table == null) {
+            Log.d(LOG_TAG, "Не пришла таблица");
+            return;
+        }
+        Cursor c = vkgaBD.query(table, null, null, null, null, null, null);
         if (c.moveToFirst()) {
             int vkIDIndex = c.getColumnIndex(COLUMN_VK_ID);
             do {
