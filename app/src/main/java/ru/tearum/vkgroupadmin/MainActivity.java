@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
     Fragment mainFrag;
     android.app.FragmentTransaction fTrans;
 
+    BD vkgaBD;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); // на весь экран
@@ -53,6 +55,11 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
         fTrans.add(R.id.frgmCont, mainFrag);
         fTrans.commit();
 
+        // подключаем бд
+        vkgaBD = new BD(this);
+        vkgaBD.open();
+
+        // запрос для получения имени юзера
         VKRequest request = VKApi.users().get();
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override
@@ -124,5 +131,11 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
         })) {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        vkgaBD.close();
     }
 }
