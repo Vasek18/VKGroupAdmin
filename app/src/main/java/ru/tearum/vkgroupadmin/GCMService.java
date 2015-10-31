@@ -2,15 +2,23 @@ package ru.tearum.vkgroupadmin;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
-public class GCMService extends Service {
+import com.google.android.gms.gcm.GcmListenerService;
+
+public class GCMService extends GcmListenerService {
+
+    private static final String LOG_TAG = "myLogs";
+
     public GCMService() {
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+    public void onMessageReceived(String from, Bundle data) {
+        String message = data.getString("message");
+        Log.d(LOG_TAG, "From: " + from);
+        Log.d(LOG_TAG, "Message: " + message);
     }
 }

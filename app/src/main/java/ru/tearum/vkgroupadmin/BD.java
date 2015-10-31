@@ -2,6 +2,7 @@ package ru.tearum.vkgroupadmin;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -38,6 +39,31 @@ public class BD {
         if (vkgaBDHelper != null) vkgaBDHelper.close();
     }
 
+    public Integer addGroup(Integer vkID) {
+        if (vkID == null) {
+            Log.d(LOG_TAG, "Не пришёл vk_id");
+            return null;
+        }
+
+        ContentValues cv = new ContentValues();
+        cv.clear();
+        cv.put(COLUMN_VK_ID, vkID);
+
+        return (int) vkgaBD.insert("groups", null, cv);
+    }
+
+    public void getGroups() {
+        Cursor c = vkgaBD.query("groups", null, null, null, null, null, null);
+        if (c.moveToFirst()) {
+            int vkIDIndex = c.getColumnIndex(COLUMN_VK_ID);
+            do {
+                for (int i = 0; i < c.getColumnCount(); i++) {
+                    Log.d(LOG_TAG, c.getColumnName(i) + " + " + c.getString(i));
+                }
+            } while (c.moveToNext());
+        }
+    }
+
     // класс для работы с БД
     class DBHelper extends SQLiteOpenHelper {
 
@@ -45,7 +71,6 @@ public class BD {
                         int version) {
             super(context, name, factory, version);
         }
-
 
 
         @Override

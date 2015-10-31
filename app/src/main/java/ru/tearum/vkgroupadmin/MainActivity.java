@@ -2,6 +2,7 @@ package ru.tearum.vkgroupadmin;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -63,7 +64,9 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
         vkgaBD = new BD(this);
         vkgaBD.open();
 
-        // запрос для получения имени юзера
+        vkgaBD.getGroups();
+
+        // запрос для получения имени юзера // TODO проверка на наличие
         VKRequest request = VKApi.users().get();
         request.executeWithListener(new VKRequest.VKRequestListener() {
             @Override

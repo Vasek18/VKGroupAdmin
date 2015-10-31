@@ -22,6 +22,7 @@ import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,6 +47,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     Tools Tools;
 
+    BD vkgaBD;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); // на весь экран
@@ -53,11 +56,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         // если мы уже логинелись - сразу уходиим на другое активити
-        if (isIDAndTokenInPrefs()){
+/*        if (isIDAndTokenInPrefs()){
             // идём на главное активити
             Intent intent = new Intent(getBaseContext(), MainActivity.class);
             startActivity(intent);
-        }
+        }*/
 
         // объявляем элементы
         btnLogin = (ImageButton) findViewById(R.id.btnLogin);
@@ -66,6 +69,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         btnLogin.setOnClickListener(this);
 
         Tools = new Tools();
+
+        // подключаем бд
+        vkgaBD = new BD(this);
+        vkgaBD.open();
     }
 
     @Override
@@ -103,6 +110,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // успешный запрос
                     public void onComplete(VKResponse response) {
                         super.onComplete(response);
+
+                        // получение групп из респонса
                         String strResponse = response.responseString;
                         JSONObject jsonResponse = response.json;
 
@@ -113,16 +122,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             e.printStackTrace();
                         }
 
-                        String groupsArr = null;
+                        // группы в виде строки
+                        String groupsArrStr = null;
                         try {
-                            groupsArr = jsonResponseBody.getString("items");
+                            groupsArrStr = jsonResponseBody.getString("items");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Log.d(LOG_TAG, "resArray = " + groupsArr);
+//                        Log.d(LOG_TAG, "resArray = " + groupsArrStr);
+
+                        // группы в виде массива
+                        JSONArray groupsArr = null;
+                        groupsArr = jsonResponseBody.optJSONArray("items");
+                        // перебор групп
+                        for (int i = 0; i < groupsArr.length(); i++) {
+                            Integer groupID = null; // Если это массив строк
+                            try {
+                                groupID = groupsArr.getInt(i);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            // записываем группу в бд
+                            vkgaBD.addGroup(groupID);
+
+//                            Log.d(LOG_TAG, "group " + i + " = " + groupID);
+                        }
+
 
                         // здесь мы пушим на сервер токен
-                        new LongOperation().execute(VKAccessTokenRes.userId, VKAccessTokenRes.accessToken, groupsArr);
+                        new LongOperation().execute(VKAccessTokenRes.userId, VKAccessTokenRes.accessToken, groupsArrStr);
 
                     }
 
@@ -233,5 +261,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         return token;
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        vkgaBD.close();
     }
 }
