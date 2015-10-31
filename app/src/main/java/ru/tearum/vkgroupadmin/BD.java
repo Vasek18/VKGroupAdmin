@@ -77,6 +77,14 @@ public class BD {
         }
     }
 
+    public Cursor getGroupsData(){
+        String table = "groups as G";
+        String columns[] = {"G."+COLUMN_ID+" as "+COLUMN_ID+"", "G.active as active", "G.name as name", "G.ava as ava", "G."+COLUMN_VK_ID+" as "+COLUMN_VK_ID+""};
+        String selection = "";
+        String[] selectionArgs = {""};
+        return vkgaBD.query(table, columns, null, null, null, null, null);
+    }
+
     // класс для работы с БД
     class DBHelper extends SQLiteOpenHelper {
 
@@ -96,7 +104,7 @@ public class BD {
                     + "active integer,"
                     + COLUMN_VK_ID + " integer,"
                     + "name text,"
-                    + "photo text"
+                    + "ava text"
                     + ");");
 
             // создаем таблицу комментов

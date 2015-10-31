@@ -23,8 +23,12 @@ public class GCMService extends GcmListenerService {
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
         String title = data.getString("title");
-        String test = data.getString("testtest");
-        message += " test = " + test;
+        String group_id = data.getString("group");
+        String type = data.getString("type");
+        String idcom = data.getString("idcom");
+        message += " group_id = " + group_id;
+        message += " type = " + type;
+        message += " idcom = " + idcom;
 
         // Выводим уведомление
         NotificationUtils n = NotificationUtils.getInstance(this);

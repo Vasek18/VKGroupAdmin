@@ -49,7 +49,7 @@ public class NotificationUtils {
         Intent notificationIntent = new Intent(context, MainActivity.class); // по клику на уведомлении откроется MainActivity
         //       NotificationCompat.Builder nb = new NotificationCompat.Builder(context)
         Notification.Builder nb = new Notification.Builder(context) //для версии Android > 3.0
-                .setSmallIcon(R.drawable.logo106x106) //иконка уведомления
+                .setSmallIcon(R.drawable.logo350x350) //иконка уведомления
                 .setAutoCancel(true) //уведомление закроется по клику на него
                 .setTicker(message) //текст, который отобразится вверху статус-бара при создании уведомления
                 .setContentText(message) // Основной текст уведомления
