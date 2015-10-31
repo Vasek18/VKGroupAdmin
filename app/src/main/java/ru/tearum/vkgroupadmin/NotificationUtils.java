@@ -45,17 +45,17 @@ public class NotificationUtils {
         return instance;
     }
 
-    public int createInfoNotification(String message){
+    public int createInfoNotification(String title, String message){
         Intent notificationIntent = new Intent(context, MainActivity.class); // по клику на уведомлении откроется MainActivity
         //       NotificationCompat.Builder nb = new NotificationCompat.Builder(context)
         Notification.Builder nb = new Notification.Builder(context) //для версии Android > 3.0
-                .setSmallIcon(R.drawable.abc_edit_text_material) //иконка уведомления
+                .setSmallIcon(R.drawable.logo106x106) //иконка уведомления
                 .setAutoCancel(true) //уведомление закроется по клику на него
                 .setTicker(message) //текст, который отобразится вверху статус-бара при создании уведомления
                 .setContentText(message) // Основной текст уведомления
                 .setContentIntent(PendingIntent.getActivity(context, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT))
                 .setWhen(System.currentTimeMillis()) //отображаемое время уведомления
-                .setContentTitle("Произошла оплата") //заголовок уведомления
+                .setContentTitle(title) //заголовок уведомления
                 .setDefaults(Notification.DEFAULT_ALL); // звук, вибро и диодный индикатор выставляются по умолчанию
 
         Notification notification = nb.build(); //генерируем уведомление

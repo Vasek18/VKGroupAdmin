@@ -22,12 +22,13 @@ public class GCMService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
-        Log.d(LOG_TAG, "From: " + from);
-        Log.d(LOG_TAG, "Message: " + message);
+        String title = data.getString("title");
+        String test = data.getString("testtest");
+        message += " test = " + test;
 
         // Выводим уведомление
         NotificationUtils n = NotificationUtils.getInstance(this);
-        n.createInfoNotification("Тест");
+        n.createInfoNotification(title, message);
     }
 
     private void sendNotification(String message) {
