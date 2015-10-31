@@ -44,8 +44,8 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
         tvName = (TextView) findViewById(R.id.user_name);
 
         // логин
-        String scope = "offline, groups"; // пермишионы
-        VKSdk.login(this, scope);
+//        String scope = "offline, groups"; // пермишионы
+//        VKSdk.login(this, scope);
 
         // подключаем главный фрагмент
         mainFrag = new MainFragment();

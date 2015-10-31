@@ -12,10 +12,18 @@ import android.widget.Button;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApi;
+import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -23,16 +31,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
+import java.net.URLEncoder;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     Button btnLogin;
     public java.lang.String VK_USER_ID;
     private static final String LOG_TAG = "myLogs";
+
+    public VKAccessToken VKAccessTokenRes; // для передачи ответа от входа в вк дальше в запрос про группы
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +83,49 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             // Пользователь успешно авторизовался
             public void onResult(VKAccessToken res) {
                 VK_USER_ID = res.userId;
-
+                VKAccessTokenRes = res;
 //                Log.d(LOG_TAG, "accessToken = " + res.accessToken);
 
-                // здесь мы пушим на сервер токен
-                new LongOperation().execute(res.userId, res.accessToken);
+                // запрос на группы пользователя
+                VKRequest request = VKApi.groups().get(VKParameters.from(VKApiConst.USER_ID, VKAccessTokenRes.userId, "filter", "moder"));
+                request.executeWithListener(new VKRequest.VKRequestListener() {
+                    @Override
+                    // успешный запрос
+                    public void onComplete(VKResponse response) {
+                        super.onComplete(response);
+                        String strResponse = response.responseString;
+                        JSONObject jsonResponse = response.json;
+
+                        JSONObject jsonResponseBody = null;
+                        try {
+                            jsonResponseBody = jsonResponse.getJSONObject("response");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        String groupsArr = null;
+                        try {
+                            groupsArr = jsonResponseBody.getString("items");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Log.d(LOG_TAG, "resArray = " + groupsArr);
+
+                        // здесь мы пушим на сервер токен
+                        new LongOperation().execute(VKAccessTokenRes.userId, VKAccessTokenRes.accessToken, groupsArr);
+
+                    }
+
+                    @Override
+                    public void onError(VKError error) {
+                        //Do error stuff
+                    }
+
+                    @Override
+                    public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                        //I don't really believe in progress
+                    }
+                });
             }
 
             @Override
@@ -89,9 +138,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     // отправка токена на сервак
-    public void pushTokenOnServer(String id, String token) {
-        Log.d(LOG_TAG, "pushTokenOnServer");
-        Log.d(LOG_TAG, request("http://vkadveyj.bget.ru/reg.php?idvk="+id+"&token="+token));
+    public void pushTokenOnServer(String id, String token, String groups) throws UnsupportedEncodingException {
+//        Log.d(LOG_TAG, "pushTokenOnServer");
+        String query = "idvk=" + id + "&token=" + token + "&groupuser=" + groups;
+//        String query = URLEncoder.encode("idvk=" + id + "&token=" + token + "&groupuser=" + groups, "UTF-8");
+        Log.d(LOG_TAG, query);
+        request("http://vkadveyj.bget.ru/reg.php?" + query);
 
         // идём на главное активити
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
@@ -129,7 +181,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //            Log.d(LOG_TAG, "Two " + params[1]);
             String id = params[0];
             String token = params[1];
-            pushTokenOnServer(id, token);
+            String groups = params[2];
+
+            try {
+                pushTokenOnServer(id, token, groups);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
 //            Log.d(LOG_TAG, "async");
             return null;
         }
