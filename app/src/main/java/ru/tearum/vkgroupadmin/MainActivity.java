@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
         vkgaBD = new BD(this);
         vkgaBD.open();
 
-        vkgaBD.getGroups();
+//        vkgaBD.getGroups();
 
         // запрос для получения имени юзера // TODO проверка на наличие
         VKRequest request = VKApi.users().get();

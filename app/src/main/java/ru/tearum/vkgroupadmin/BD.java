@@ -39,9 +39,18 @@ public class BD {
         if (vkgaBDHelper != null) vkgaBDHelper.close();
     }
 
+    // добавление группы (только айдишник)
     public Integer addGroup(Integer vkID) {
         if (vkID == null) {
             Log.d(LOG_TAG, "Не пришёл vk_id");
+            return null;
+        }
+        // существует ли уже такая группа?
+        String selection = COLUMN_VK_ID + " = ?";
+        String[] selectionArgs = new String[] {String.valueOf(vkID)};
+        Cursor c = vkgaBD.query("groups", null, selection, selectionArgs, null, null, null);
+        if (c.moveToFirst()) {
+            Log.d(LOG_TAG, "Уже есть группа с vk_id");
             return null;
         }
 
