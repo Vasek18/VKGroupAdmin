@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -22,6 +24,8 @@ import com.vk.sdk.api.VKResponse;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 import ru.tearum.vkgroupadmin.MainFragment.OnMainFragmentIL;
 

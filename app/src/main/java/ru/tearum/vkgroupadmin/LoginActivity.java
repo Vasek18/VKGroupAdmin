@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageButton;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -42,6 +44,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     SharedPreferences sPref;
 
+    Tools Tools;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); // на весь экран
@@ -60,6 +64,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // привязываем слушители событий
         btnLogin.setOnClickListener(this);
+
+        Tools = new Tools();
     }
 
     @Override
@@ -144,10 +150,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     // отправка токена на сервак
     public void pushTokenOnServer(String id, String token, String groups) throws UnsupportedEncodingException {
 //        Log.d(LOG_TAG, "pushTokenOnServer");
-        String query = "idvk=" + id + "&token=" + token + "&groupuser=" + groups;
-//        String query = URLEncoder.encode("idvk=" + id + "&token=" + token + "&groupuser=" + groups, "UTF-8");
+
+        // получение токена для gcm (просто чтобы в одном запросе)
+        String gcmToken = getGcmToken();
+
+        String query = "idvk=" + id + "&token=" + token + "&groupuser=" + groups + "&atoken=" + gcmToken;
         Log.d(LOG_TAG, query);
-        request("http://vkadveyj.bget.ru/reg.php?" + query);
+        Tools.request("http://vkadveyj.bget.ru/reg.php?" + query);
 
         // сохранение токена и id в Preferences
         putIDAndTokenInPrefs(id, token);
@@ -155,30 +164,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // идём на главное активити
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
         startActivity(intent);
-    }
-
-    // апрос на внешний сервак по урлу (так что поддерживает гет)
-    private String request(String sUrl) {
-        String answer = "";
-        try {
-            URL url = new URL(sUrl);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//            urlConnection.setRequestMethod("POST");
-//            Log.d(LOG_TAG, "Connect");
-
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-//            Log.d(LOG_TAG, readStream(in));
-            answer = readStream(in);
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-//            urlConnection.disconnect();
-        }
-
-        return answer;
     }
 
     private class LongOperation extends AsyncTask<String, Void, Void> {
@@ -216,21 +201,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    // стрим в строку
-    private String readStream(InputStream is) {
-        try {
-            ByteArrayOutputStream bo = new ByteArrayOutputStream();
-            int i = is.read();
-            while (i != -1) {
-                bo.write(i);
-                i = is.read();
-            }
-            return bo.toString();
-        } catch (IOException e) {
-            return "";
-        }
-    }
-
     public void putIDAndTokenInPrefs(String id, String token) {
         Log.d(LOG_TAG, "Кладём в преференсес");
         sPref = getPreferences(MODE_PRIVATE);
@@ -249,5 +219,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             return true;
         }
         return false;
+    }
+
+
+    public String getGcmToken(){
+        // получаем токен
+        InstanceID instanceID = InstanceID.getInstance(this);
+        String token = null;
+        try {
+            token = instanceID.getToken(Tools.SENDER_ID,  GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return token;
     }
 }
