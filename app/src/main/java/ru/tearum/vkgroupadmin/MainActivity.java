@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
 //        vkgaBD.downloadImages("groups", "ava");
 
         // подключаем главный фрагмент
-        mainFrag = new MainFragment();
+        mainFrag = new CommentDetail();
         fTrans = getFragmentManager().beginTransaction();
         fTrans.add(R.id.frgmCont, mainFrag);
         fTrans.commit();
