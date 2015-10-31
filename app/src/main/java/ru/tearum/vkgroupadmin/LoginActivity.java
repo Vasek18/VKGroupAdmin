@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -31,7 +32,7 @@ import java.io.UnsupportedEncodingException;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener{
 
-    ImageButton btnLogin;
+    Button btnLogin;
     public java.lang.String VK_USER_ID;
     private static final String LOG_TAG = "myLogs";
 
@@ -50,14 +51,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         // если мы уже логинелись - сразу уходиим на другое активити
-/*        if (isIDAndTokenInPrefs()){
+        if (isIDAndTokenInPrefs()){
             // идём на главное активити
             Intent intent = new Intent(getBaseContext(), MainActivity.class);
             startActivity(intent);
-        }*/
+        }
 
         // объявляем элементы
-        btnLogin = (ImageButton) findViewById(R.id.btnLogin);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
 
         // привязываем слушители событий
         btnLogin.setOnClickListener(this);

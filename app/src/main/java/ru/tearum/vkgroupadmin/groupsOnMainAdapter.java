@@ -2,13 +2,19 @@ package ru.tearum.vkgroupadmin;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import java.io.InputStream;
 
 /**
  * Created by Вася on 31.10.2015.
@@ -52,7 +58,6 @@ public class groupsOnMainAdapter extends SimpleCursorAdapter{
             String active = c.getString(c.getColumnIndex("active"));
             String vk_id = c.getString(c.getColumnIndex("vk_id"));
         }
-
     }
 
     // сoздаёт новую view для хранения данных на которую указывает курсор

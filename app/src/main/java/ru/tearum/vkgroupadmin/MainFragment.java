@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -27,6 +28,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     BD vkgaBD;
 
     ListView groupsOnMainContainer;
+
+    View v;
 
     private static final int URL_LOADER = 0;
 
@@ -49,15 +52,15 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     // точка входа при подключении в активити
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_main, container, false);
+        v = inflater.inflate(R.layout.fragment_main, container, false);
 
         vkgaBD = new BD(getActivity());
         vkgaBD.open();
 
         // вывод групп на главной
         // формируем столбцы сопоставления
-        String[] from = new String[] {"ava", "name"};
-        int[] to = new int[] {R.id.ivAva, R.id.tvName};
+        String[] from = new String[] {"name"};
+        int[] to = new int[] {R.id.tvName};
 
         // создаем адаптер и настраиваем список
         gomAdapter = new groupsOnMainAdapter(getActivity(), R.layout.group_on_main_item, null, from, to, 0);

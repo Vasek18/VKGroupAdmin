@@ -5,7 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ImageView;
+
+import java.io.InputStream;
 
 /**
  * Created by Вася on 31.10.2015.
@@ -41,7 +47,7 @@ public class BD {
 
     // добавление группы (только айдишник)
     public Integer addGroup(Integer vkID, String ava, String name) {
-        Log.d(LOG_TAG, "addGroup");
+//        Log.d(LOG_TAG, "addGroup");
         if (vkID == null) {
             Log.d(LOG_TAG, "Не пришёл vk_id");
             return null;
@@ -86,6 +92,37 @@ public class BD {
         String selection = "";
         String[] selectionArgs = {""};
         return vkgaBD.query(table, columns, null, null, null, null, null);
+    }
+
+    // поменять в дб картинки с урла на ресурс
+    public void downloadImages(String table, String column){
+//        Log.d(LOG_TAG, "downloadImages");
+        if (table == null || table.isEmpty()) {
+            Log.d(LOG_TAG, "Не пришёл table");
+            return;
+        }
+        if (column == null || column.isEmpty()) {
+            Log.d(LOG_TAG, "Не пришёл column");
+            return;
+        }
+        // существует группы без скаченных картинок
+        String selection = column + " LIKE ?";
+        String[] selectionArgs = new String[] {"http%"};
+//        Cursor c = vkgaBD.query(table, null, null, null, null, null, null);
+        Cursor c = vkgaBD.query(table, null, selection, selectionArgs, null, null, null);
+        if (c.moveToFirst()) {
+            Log.d(LOG_TAG, "Есть такие");
+            return;
+        }
+
+       /* ContentValues cv = new ContentValues();
+        cv.clear();
+        cv.put(COLUMN_VK_ID, vkID);
+        cv.put("name", name);
+        cv.put("ava", ava);
+
+        return (int) vkgaBD.insert("groups", null, cv);*/
+        return;
     }
 
     // класс для работы с БД

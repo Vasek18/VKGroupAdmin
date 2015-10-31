@@ -5,23 +5,42 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="ru.tearum.vkgroupadmin.LoginActivity"
-    android:background="@color/midnight_blue">
+    android:background="#000001">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
         android:id="@+id/imageView"
         android:src="@drawable/greeting_logo"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:padding="0dp" />
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="0dp"
+        android:paddingTop="20dp"
+        android:paddingRight="10dp" />
 
-    <ImageButton
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnLogin"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Qalla"
+        android:id="@+id/textView"
+        android:textColor="#ffffff"
+        android:textSize="40dp"
         android:layout_below="@+id/imageView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:src="@drawable/login_button" />
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Вход"
+        android:id="@+id/btnLogin"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:layout_marginTop="53dp"
+        android:textSize="25dp"
+        android:layout_below="@+id/textView"
+        android:layout_centerHorizontal="true" />
+
 </RelativeLayout>

@@ -50,15 +50,19 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
 
         tvName = (TextView) findViewById(R.id.user_name);
 
+        // подключаем бд
+        vkgaBD = new BD(this);
+        vkgaBD.open();
+
+        // скачиваем картинки
+//        vkgaBD.downloadImages("groups", "ava");
+
         // подключаем главный фрагмент
         mainFrag = new MainFragment();
         fTrans = getFragmentManager().beginTransaction();
         fTrans.add(R.id.frgmCont, mainFrag);
         fTrans.commit();
 
-        // подключаем бд
-        vkgaBD = new BD(this);
-        vkgaBD.open();
 
 //        getGroupsData();
 
