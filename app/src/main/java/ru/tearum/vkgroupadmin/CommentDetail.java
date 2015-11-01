@@ -1,9 +1,11 @@
 package ru.tearum.vkgroupadmin;
 
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +19,9 @@ public class CommentDetail extends Fragment{
     private static final String LOG_TAG = "myLogs";
 
     SimpleCursorAdapter scAdapter;
-    BD db;
+    BD vkgaBD;
 
-    public static long comment_id;
+    public Integer comment_id;
 
     TextView tvName;
     TextView tvDate;
@@ -38,8 +40,36 @@ public class CommentDetail extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState){
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.comment_detail, container, false);
+        View v = inflater.inflate(R.layout.comment_detail, container, false);
+
+        // инициализируем элементы
+        tvName = (TextView) v.findViewById(R.id.tvName);
+        tvDate = (TextView) v.findViewById(R.id.tvDate);
+        tvCommentPlace = (TextView) v.findViewById(R.id.tvCommentPlace);
+        tvComment = (TextView) v.findViewById(R.id.tvComment);
+        btnDel = (Button) v.findViewById(R.id.btnDel);
+        btnImportant = (Button) v.findViewById(R.id.btnImportant);
+        mtvAnswer = (EditText) v.findViewById(R.id.mtvAnswer);
+        btnSend = (Button) v.findViewById(R.id.btnSend);
+
+        // Подключаемся к БД
+        vkgaBD = new BD(getActivity());
+        vkgaBD.open();
+
+        // вывод основной инфы про коммент
+//        vkgaBD.getTableInfo("comments");
+        comment_id = 1;
+        Cursor c = vkgaBD.getCommentDetail(comment_id); // todo переделать на асинхронность
+        if (c != null) {
+            if (c.moveToFirst()) {
+                tvName.setText(c.getString(c.getColumnIndex("user_name")));
+                tvDate.setText(c.getString(c.getColumnIndex("date")));
+                tvComment.setText(c.getString(c.getColumnIndex("text")));
+                tvCommentPlace.setText(c.getString(c.getColumnIndex("commentPlace")));
+            }
+        }
+
+        return v;
     }
 
     public static CommentDetail newInstance(Integer id) {

@@ -3,43 +3,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="ru.tearum.vkgroupadmin.CommentDetail"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#000000">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:weightSum="1"
+        android:padding="10dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Андрей"
-            android:id="@+id/tvName" />
+            android:id="@+id/tvName"
+            android:layout_marginTop="0dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#ffffff" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Дата"
-            android:id="@+id/tvDate" />
-    </LinearLayout>
+            android:id="@+id/tvDate"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="10dp"
+            android:textColor="#d6d6d6" />
+    </RelativeLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Оставленно под фоткой"
-        android:id="@+id/tvCommentPlace" />
+        android:id="@+id/tvCommentPlace"
+        android:layout_marginLeft="20dp"
+        android:textColor="#d8d8d8" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Очень большой и содержательный коммент, рассказывающий о сакральных тайнах Вселенной и всего такого"
-        android:id="@+id/tvComment" />
+        android:id="@+id/tvComment"
+        android:padding="20dp"
+        android:textColor="#ffffff" />
 
-    <LinearLayout
+    <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -48,14 +62,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Удалить"
-            android:id="@+id/btnDel" />
+            android:id="@+id/btnDel"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/btnImportant" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Важное"
-            android:id="@+id/btnImportant" />
-    </LinearLayout>
+            android:id="@+id/btnImportant"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp" />
+    </RelativeLayout>
 
     <EditText
         android:layout_width="match_parent"
@@ -63,12 +82,18 @@
         android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/mtvAnswer"
-        android:layout_gravity="center_horizontal"
-        android:text="Ответ" />
+        android:text="Ответ"
+        android:background="#eeeeee"
+        android:layout_margin="20dp"
+        android:padding="10dp"
+        android:textIsSelectable="false"
+        android:enabled="false" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Отправить"
-        android:id="@+id/btnSend" />
+        android:id="@+id/btnSend"
+        android:layout_gravity="right"
+        android:layout_marginRight="20dp" />
 </LinearLayout>
