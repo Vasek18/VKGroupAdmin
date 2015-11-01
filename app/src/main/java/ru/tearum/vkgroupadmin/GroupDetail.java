@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -36,6 +37,10 @@ public class GroupDetail extends Fragment implements LoaderManager.LoaderCallbac
     ListView commentsContainer;
 
     private static final int URL_LOADER = 1;
+
+    android.app.FragmentTransaction fTrans;
+
+    private static final String BACK_STACK_TAG = "vkgaStack";
 
     public static GroupDetail newInstance(Integer id){
         GroupDetail f = new GroupDetail();
@@ -92,6 +97,21 @@ public class GroupDetail extends Fragment implements LoaderManager.LoaderCallbac
 
         // создаем лоадер для чтения данных
         getLoaderManager().initLoader(URL_LOADER, null, this);
+
+        // обработчик нажатия на элемент списка
+        commentsContainer.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id){
+
+                // переход на детальную страницу чекина
+                fTrans = getFragmentManager().beginTransaction();
+                CommentDetail commentDetailFragment = CommentDetail.newInstance((int) id);
+                fTrans.replace(R.id.frgmCont, commentDetailFragment);
+                fTrans.addToBackStack(BACK_STACK_TAG); // добавляем в стек (для кнопки назад)
+                fTrans.commit();
+
+            }
+        });
 
         return v;
     }
