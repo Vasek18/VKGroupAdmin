@@ -1,6 +1,5 @@
 package ru.tearum.vkgroupadmin;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -71,7 +70,6 @@ public class Tools {
             return "";
         }
     }
-
 
     public class DownloadImageTask extends AsyncTask<String, Void, Bitmap>{
         ImageView bmImage;

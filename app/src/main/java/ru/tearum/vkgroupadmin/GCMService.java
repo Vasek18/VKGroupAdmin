@@ -16,6 +16,8 @@ public class GCMService extends GcmListenerService {
 
     private static final String LOG_TAG = "myLogs";
 
+    BD vkgaBD;
+
     public GCMService() {
     }
 
@@ -23,12 +25,21 @@ public class GCMService extends GcmListenerService {
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
         String title = data.getString("title");
-        String group_id = data.getString("group");
-        String type = data.getString("type");
-        String idcom = data.getString("idcom");
-        message += " group_id = " + group_id;
-        message += " type = " + type;
-        message += " idcom = " + idcom;
+        Integer group_id = data.getInt("group");
+        Integer type = data.getInt("type");
+        Integer commentID = data.getInt("idcom");
+        Integer user_id = data.getInt("user_id");
+//        Integer related_id = data.getInt("related_id");
+
+        // Подключаемся к БД
+        vkgaBD = new BD(this);
+        vkgaBD.open();
+
+        // запись в бд
+        Integer related_id = 1;
+        String user_name = "Олег";
+        Integer newCommentID = vkgaBD.addComment(user_id, group_id, message, type, related_id, commentID, user_name);
+        Log.d(LOG_TAG, "Новый коммент = " + newCommentID);
 
         // Выводим уведомление
         NotificationUtils n = NotificationUtils.getInstance(this);

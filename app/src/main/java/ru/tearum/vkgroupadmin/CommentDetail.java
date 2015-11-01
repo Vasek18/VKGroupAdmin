@@ -1,6 +1,8 @@
 package ru.tearum.vkgroupadmin;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -22,6 +24,8 @@ public class CommentDetail extends Fragment{
     SimpleCursorAdapter scAdapter;
     BD vkgaBD;
 
+    SharedPreferences sPref;
+
     public Integer comment_id;
 
     TextView tvName;
@@ -34,6 +38,9 @@ public class CommentDetail extends Fragment{
     Button btnSend;
 
     String newCommentText;
+
+    Integer vkid;
+    String ownerName;
 
     public CommentDetail(){
         // Required empty public constructor
@@ -59,9 +66,14 @@ public class CommentDetail extends Fragment{
         vkgaBD = new BD(getActivity());
         vkgaBD.open();
 
+        // получаем имя юзера, айди
+        sPref = this.getActivity().getPreferences(Context.MODE_PRIVATE);
+        vkid = sPref.getInt("id", 0);
+        ownerName = sPref.getString("name", "");
+
         // вывод основной инфы про коммент
 //        vkgaBD.getTableInfo("comments");
-        comment_id = 3;
+        comment_id = 8;
         Cursor c = vkgaBD.getCommentDetail(comment_id); // todo переделать на асинхронность
         if (c != null) {
             if (c.moveToFirst()) {
@@ -75,7 +87,6 @@ public class CommentDetail extends Fragment{
             }
         }
 
-
         // Добавление коммента
         btnSend.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -87,16 +98,15 @@ public class CommentDetail extends Fragment{
                     return;
                 }
 
-                Integer user_id = 1; // todo текущий пользователь
                 Integer group_id = 1;
-                String text = "Ololo";
                 Integer type = 1;
                 Integer related_id = 1;
                 Integer vkID = 1;
-                String user_name = "Олег";
                 // todo обновлять список комментариев
-                Integer newCommentID = vkgaBD.addComment(user_id, group_id, text, type, related_id, vkID, user_name);
+                Integer newCommentID = vkgaBD.addComment(vkid, group_id, newCommentText, type, related_id, vkID, ownerName);
                 Log.d(LOG_TAG, "Новый коммент = " + newCommentID);
+                Toast.makeText(getActivity(), "Коммент добавлен", Toast.LENGTH_LONG).show();
+                mtvAnswer.setText("");
             }
         });
 

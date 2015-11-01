@@ -66,15 +66,11 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
         fTrans.add(R.id.frgmCont, mainFrag);
         fTrans.commit();
 
-
-//        getGroupsData();
-
-
         // зачем каждый раз имя получать?
         sPref = getPreferences(MODE_PRIVATE);
         String name = sPref.getString("name", "");
         if (name == null || name.isEmpty()){
-            // запрос для получения имени юзера // TODO проверка на наличие
+            // запрос для получения имени юзера
             VKRequest request = VKApi.users().get();
             request.executeWithListener(new VKRequest.VKRequestListener(){
                 @Override
