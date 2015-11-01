@@ -143,7 +143,7 @@ public class BD{
     }
 
     // добавление коммента
-    public Integer addComment(Integer user_id, Integer group_id, String text, Integer type, Integer related_id, Integer vkID, String user_name, String date){
+    public Integer addComment(Integer user_id, Integer group_id, String text, Integer type, Integer related_id, Integer vkID, String user_name, String date, Integer _new){
         Log.d(LOG_TAG, "addComment " + user_id + " " + group_id + " " + type + " " + related_id + " " + vkID + " " + user_name);
         ContentValues cv = new ContentValues();
         cv.clear();
@@ -154,6 +154,7 @@ public class BD{
         cv.put("text", text);
         cv.put("user_name", user_name);
         cv.put("related_id", related_id);
+        cv.put("newish", _new);
         cv.put("date", date);
 
         return (int) vkgaBD.insert("comments", null, cv);
@@ -174,8 +175,8 @@ public class BD{
         Integer count = 0;
         String table = "comments as C";
         String columns[] = {"count(*) as cComments"};
-        String selection = "C.group_id = ?";
-        String[] selectionArgs = {String.valueOf(group_id)};
+        String selection = "C.group_id = ? and C.newish = ?";
+        String[] selectionArgs = {String.valueOf(group_id), String.valueOf(1)};
         Cursor c = vkgaBD.query(table, columns, selection, selectionArgs, null, null, null);
 
         if (c != null){
@@ -184,6 +185,14 @@ public class BD{
             }
         }
         return count;
+    }
+
+    public void iVeSeenComments(Integer group_id){
+        ContentValues cv = new ContentValues();
+        cv.clear();
+        cv.put("newish", 0);
+        vkgaBD.update("comments", cv, "group_id = ?", new String[]{String.valueOf(group_id)});
+        return;
     }
 
     // класс для работы с БД
@@ -220,6 +229,7 @@ public class BD{
                     + "user_name text,"
                     + "related_id integer,"
                     + "in_favorite integer,"
+                    + "newish integer,"
                     + "date text"
                     + ");");
 

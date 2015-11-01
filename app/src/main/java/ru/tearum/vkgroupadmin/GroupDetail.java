@@ -113,6 +113,9 @@ public class GroupDetail extends Fragment implements LoaderManager.LoaderCallbac
             }
         });
 
+        // отметить комментарии как увиденные
+        vkgaBD.iVeSeenComments(group_id);
+
         return v;
     }
 

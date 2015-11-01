@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL{
         vkgaBD = new BD(this);
         vkgaBD.open();
 
-//        vkgaBD.getTableInfo("comments");
+        vkgaBD.getTableInfo("comments");
 
         // скачиваем картинки
 //        vkgaBD.downloadImages("groups", "ava");

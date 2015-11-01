@@ -123,7 +123,7 @@ public class CommentDetail extends Fragment{
                 Integer related_id = 1;
                 Integer vkID = 1;
                 // todo обновлять список комментариев
-                Integer newCommentID = vkgaBD.addComment(vkid, group_id, newCommentText, type, related_id, vkID, ownerName, new SimpleDateFormat(DATE_FORMAT).format(new Date(System.currentTimeMillis())));
+                Integer newCommentID = vkgaBD.addComment(vkid, group_id, newCommentText, type, related_id, vkID, ownerName, new SimpleDateFormat(DATE_FORMAT).format(new Date(System.currentTimeMillis())), 0);
                 Log.d(LOG_TAG, "Новый коммент = " + newCommentID);
                 Toast.makeText(getActivity(), "Коммент добавлен", Toast.LENGTH_LONG).show();
                 mtvAnswer.setText("");
