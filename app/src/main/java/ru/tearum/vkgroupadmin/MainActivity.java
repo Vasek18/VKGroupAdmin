@@ -2,6 +2,7 @@ package ru.tearum.vkgroupadmin;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
 
     BD vkgaBD;
 
+    SharedPreferences sPref;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); // на весь экран
@@ -66,60 +69,76 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
 
 //        getGroupsData();
 
-        // запрос для получения имени юзера // TODO проверка на наличие
-        VKRequest request = VKApi.users().get();
-        request.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            // успешный запрос
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
+
+        // зачем каждый раз имя получать?
+        sPref = getPreferences(MODE_PRIVATE);
+        String name = sPref.getString("name", "");
+        if (name == null || name.isEmpty()){
+            // запрос для получения имени юзера // TODO проверка на наличие
+            VKRequest request = VKApi.users().get();
+            request.executeWithListener(new VKRequest.VKRequestListener(){
+                @Override
+                // успешный запрос
+                public void onComplete(VKResponse response){
+                    super.onComplete(response);
 //                Log.d(LOG_TAG, "Что-то получилось");
 
 //                Log.d(LOG_TAG, response.responseString);
 
-                org.json.JSONObject json = response.json;
+                    org.json.JSONObject json = response.json;
 
-                // приходит массив в json, берём его
-                org.json.JSONArray jsonArr = null;
-                try {
-                    jsonArr = json.getJSONArray("response");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    // приходит массив в json, берём его
+                    org.json.JSONArray jsonArr = null;
+                    try {
+                        jsonArr = json.getJSONArray("response");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
-                // массив в json - массив, поэтому преобразуем его в json
-                JSONObject res = null;
-                try {
-                    res = (JSONObject) jsonArr.get(0);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    // массив в json - массив, поэтому преобразуем его в json
+                    JSONObject res = null;
+                    try {
+                        res = (JSONObject) jsonArr.get(0);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 
-                // берём имя из подмассива
-                String name = "";
-                try {
-                    name = res.getString("first_name");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    // берём имя из подмассива
+                    String name = "";
+                    try {
+                        name = res.getString("first_name");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
 //                Log.d(LOG_TAG, "name = " + name);
-                tvName.setText(name);
+                    // ставим имя в шапку
+                    tvName.setText(name);
+
+                    // записываем имя в префы
+                    sPref = getPreferences(MODE_PRIVATE);
+                    SharedPreferences.Editor ed = sPref.edit();
+                    ed.putString("name", name);
+                    ed.commit();
 
 //                Log.d(LOG_TAG, "name = " + name);
 //                Log.d(LOG_TAG, json.toString());
 
-            }
+                }
 
-            @Override
-            public void onError(VKError error) {
+                @Override
+                public void onError(VKError error){
 //Do error stuff
-            }
+                }
 
-            @Override
-            public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+                @Override
+                public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts){
 //I don't really believe in progress
-            }
-        });
+                }
+            });
+        }else{
+            // ставим имя в шапку
+            tvName.setText(name);
+        }
     }
 
     @Override
