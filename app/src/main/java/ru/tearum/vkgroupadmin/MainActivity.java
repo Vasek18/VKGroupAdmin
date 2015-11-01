@@ -53,6 +53,14 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
 
         tvName = (TextView) findViewById(R.id.user_name);
 
+        Integer comment_id = null;
+        if (savedInstanceState == null){
+            Bundle extras = getIntent().getExtras();
+            if(extras != null) {
+                comment_id = extras.getInt("comment_id");
+            }
+        }
+
         // подключаем бд
         vkgaBD = new BD(this);
         vkgaBD.open();
@@ -60,8 +68,14 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
         // скачиваем картинки
 //        vkgaBD.downloadImages("groups", "ava");
 
-        // подключаем главный фрагмент
-        mainFrag = new CommentDetail();
+        // подключаем фрагмент
+        if (comment_id != null){
+            mainFrag = new CommentDetail();
+        }
+        else{
+            mainFrag = new MainFragment();
+        }
+
         fTrans = getFragmentManager().beginTransaction();
         fTrans.add(R.id.frgmCont, mainFrag);
         fTrans.commit();

@@ -29,6 +29,7 @@ public class GCMService extends GcmListenerService {
         Integer type = data.getInt("type");
         Integer commentID = data.getInt("idcom");
         Integer user_id = data.getInt("user_id");
+        String date = data.getString("date");
 //        Integer related_id = data.getInt("related_id");
 
         // Подключаемся к БД
@@ -38,12 +39,12 @@ public class GCMService extends GcmListenerService {
         // запись в бд
         Integer related_id = 1;
         String user_name = "Олег";
-        Integer newCommentID = vkgaBD.addComment(user_id, group_id, message, type, related_id, commentID, user_name);
+        Integer newCommentID = vkgaBD.addComment(user_id, group_id, message, type, related_id, commentID, user_name, date);
         Log.d(LOG_TAG, "Новый коммент = " + newCommentID);
 
         // Выводим уведомление
         NotificationUtils n = NotificationUtils.getInstance(this);
-        n.createInfoNotification(title, message);
+        n.createInfoNotification(title, message, newCommentID);
     }
 
     private void sendNotification(String message) {

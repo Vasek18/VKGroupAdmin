@@ -16,6 +16,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+
 
 public class CommentDetail extends Fragment{
 
@@ -41,6 +44,8 @@ public class CommentDetail extends Fragment{
 
     Integer vkid;
     String ownerName;
+
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     public CommentDetail(){
         // Required empty public constructor
@@ -73,14 +78,30 @@ public class CommentDetail extends Fragment{
 
         // вывод основной инфы про коммент
 //        vkgaBD.getTableInfo("comments");
-        comment_id = 8;
+        if (comment_id == 0 || comment_id == null){
+            comment_id = 10;
+        }
+
         Cursor c = vkgaBD.getCommentDetail(comment_id); // todo переделать на асинхронность
         if (c != null) {
             if (c.moveToFirst()) {
                 tvName.setText(c.getString(c.getColumnIndex("user_name")));
                 tvDate.setText(c.getString(c.getColumnIndex("date")));
                 tvComment.setText(c.getString(c.getColumnIndex("text")));
-                tvCommentPlace.setText(c.getString(c.getColumnIndex("commentPlace")));
+
+                Integer commentPlaceID = 1;
+                String commentPlace = "";
+                commentPlaceID = c.getInt(c.getColumnIndex("type"));
+                if (commentPlaceID == 1){
+                    commentPlace = "Коммент оставлен а стене";
+                }
+                if (commentPlaceID == 2){
+                    commentPlace = "Коммент оставлен в альбоме";
+                }
+                if (commentPlaceID == 3){
+                    commentPlace = "Коммент оставлен в обсуждениях";
+                }
+                tvCommentPlace.setText(commentPlace);
             }
             else{
                 Log.d(LOG_TAG, "Нет такого коммента");
@@ -103,7 +124,7 @@ public class CommentDetail extends Fragment{
                 Integer related_id = 1;
                 Integer vkID = 1;
                 // todo обновлять список комментариев
-                Integer newCommentID = vkgaBD.addComment(vkid, group_id, newCommentText, type, related_id, vkID, ownerName);
+                Integer newCommentID = vkgaBD.addComment(vkid, group_id, newCommentText, type, related_id, vkID, ownerName, new SimpleDateFormat(DATE_FORMAT).format(new Date(System.currentTimeMillis())));
                 Log.d(LOG_TAG, "Новый коммент = " + newCommentID);
                 Toast.makeText(getActivity(), "Коммент добавлен", Toast.LENGTH_LONG).show();
                 mtvAnswer.setText("");

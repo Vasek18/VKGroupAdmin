@@ -76,9 +76,11 @@ public class BD{
         if (c.moveToFirst()){
             int vkIDIndex = c.getColumnIndex(COLUMN_VK_ID);
             do{
+                String row = "";
                 for (int i = 0; i < c.getColumnCount(); i++){
-                    Log.d(LOG_TAG, c.getColumnName(i) + " + " + c.getString(i));
+                    row += c.getColumnName(i) + " + " + c.getString(i) + " ";
                 }
+                Log.d(LOG_TAG, row);
             } while (c.moveToNext());
         }
     }
@@ -124,7 +126,7 @@ public class BD{
 
     public Cursor getCommentDetail(Integer id){
         String table = "comments as C";
-        String columns[] = {"C.user_name as user_name", "C.date as date", "C.text as text", "C.related_id as commentPlace"};
+        String columns[] = {"C.user_name as user_name", "C.date as date", "C.text as text", "C.type as type"};
         String selection = "_id = ?";
         String[] selectionArgs = {String.valueOf(id)};
         return vkgaBD.query(table, columns, selection, selectionArgs, null, null, null);
@@ -132,7 +134,7 @@ public class BD{
     }
 
     // добавление коммента
-    public Integer addComment(Integer user_id, Integer group_id, String text, Integer type, Integer related_id, Integer vkID, String user_name){
+    public Integer addComment(Integer user_id, Integer group_id, String text, Integer type, Integer related_id, Integer vkID, String user_name, String date){
         Log.d(LOG_TAG, "addComment " + user_id + " " + group_id + " " + type + " " + related_id + " " + vkID + " " + user_name);
         ContentValues cv = new ContentValues();
         cv.clear();
@@ -140,8 +142,10 @@ public class BD{
         cv.put("group_id", group_id);
         cv.put("type", type);
         cv.put("user_id", user_id);
+        cv.put("text", text);
         cv.put("user_name", user_name);
         cv.put("related_id", related_id);
+        cv.put("date", date);
 
         return (int) vkgaBD.insert("comments", null, cv);
     }
@@ -183,26 +187,6 @@ public class BD{
                     + "date text"
                     + ");");
 
-            String[][] commentsTable = {
-                    {"1", "1", "32", "1", "Ололо", "1", "Вася", "1", "1"},
-                    {"1", "2", "33", "2", "Троло", "2", "Андрей", "2", "2"}
-            };
-
-            // заполняем таблицу комментов
-            for (int i = 0; i < commentsTable.length; i++){
-                cv.clear();
-                cv.put("active", 1);
-                cv.put(COLUMN_VK_ID, commentsTable[i][1]);
-                cv.put("group_id", commentsTable[i][2]);
-                cv.put("type", commentsTable[i][3]);
-                cv.put("text", commentsTable[i][4]);
-                cv.put("user_id", commentsTable[i][5]);
-                cv.put("user_name", commentsTable[i][6]);
-                cv.put("related_id", commentsTable[i][7]);
-                cv.put("in_favorite", commentsTable[i][8]);
-                cv.put("date", new SimpleDateFormat(DATE_FORMAT).format(new Date(System.currentTimeMillis())));
-                db.insert("comments", null, cv);
-            }
         }
 
         @Override

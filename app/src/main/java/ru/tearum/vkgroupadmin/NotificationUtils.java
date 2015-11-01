@@ -45,8 +45,8 @@ public class NotificationUtils {
         return instance;
     }
 
-    public int createInfoNotification(String title, String message){
-        Intent notificationIntent = new Intent(context, MainActivity.class); // по клику на уведомлении откроется MainActivity
+    public int createInfoNotification(String title, String message, Integer comment_id){
+        Intent notificationIntent = new Intent(context, MainActivity.class).putExtra("comment_id", comment_id); // по клику на уведомлении откроется MainActivity
         //       NotificationCompat.Builder nb = new NotificationCompat.Builder(context)
         Notification.Builder nb = new Notification.Builder(context) //для версии Android > 3.0
                 .setSmallIcon(R.drawable.logo350x350) //иконка уведомления
