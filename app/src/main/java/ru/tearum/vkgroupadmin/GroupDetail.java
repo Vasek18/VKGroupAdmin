@@ -40,7 +40,7 @@ public class GroupDetail extends Fragment implements LoaderManager.LoaderCallbac
 
     android.app.FragmentTransaction fTrans;
 
-    private static final String BACK_STACK_TAG = "vkgaStack";
+    private static final String BACK_STACK_TAG = null;
 
     public static GroupDetail newInstance(Integer id){
         GroupDetail f = new GroupDetail();

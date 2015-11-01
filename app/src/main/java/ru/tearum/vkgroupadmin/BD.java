@@ -169,6 +169,23 @@ public class BD{
         return vkgaBD.query(table, columns, selection, selectionArgs, null, null, null);
     }
 
+    public Integer countNewComments(Integer group_id){
+//        Log.d(LOG_TAG, "countNewComments = " + group_id);
+        Integer count = 0;
+        String table = "comments as C";
+        String columns[] = {"count(*) as cComments"};
+        String selection = "C.group_id = ?";
+        String[] selectionArgs = {String.valueOf(group_id)};
+        Cursor c = vkgaBD.query(table, columns, selection, selectionArgs, null, null, null);
+
+        if (c != null){
+            if (c.moveToFirst()){
+                count = c.getInt(c.getColumnIndex("cComments"));
+            }
+        }
+        return count;
+    }
+
     // класс для работы с БД
     class DBHelper extends SQLiteOpenHelper{
 

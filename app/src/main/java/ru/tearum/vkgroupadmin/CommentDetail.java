@@ -1,11 +1,11 @@
 package ru.tearum.vkgroupadmin;
 
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -83,8 +83,8 @@ public class CommentDetail extends Fragment{
         }
 
         Cursor c = vkgaBD.getCommentDetail(comment_id); // todo переделать на асинхронность
-        if (c != null) {
-            if (c.moveToFirst()) {
+        if (c != null){
+            if (c.moveToFirst()){
                 tvName.setText(c.getString(c.getColumnIndex("user_name")));
                 tvDate.setText(c.getString(c.getColumnIndex("date")));
                 tvComment.setText(c.getString(c.getColumnIndex("text")));
@@ -102,19 +102,18 @@ public class CommentDetail extends Fragment{
                     commentPlace = "Коммент оставлен в обсуждениях";
                 }
                 tvCommentPlace.setText(commentPlace);
-            }
-            else{
+            } else{
                 Log.d(LOG_TAG, "Нет такого коммента");
             }
         }
 
         // Добавление коммента
-        btnSend.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
+        btnSend.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
                 newCommentText = mtvAnswer.getText().toString();
 
                 // проверка на пустоту
-                if ("".equals(newCommentText)) {
+                if ("".equals(newCommentText)){
                     Toast.makeText(getActivity(), R.string.error_empty_comment, Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -134,7 +133,7 @@ public class CommentDetail extends Fragment{
         return v;
     }
 
-    public static CommentDetail newInstance(Integer id) {
+    public static CommentDetail newInstance(Integer id){
         CommentDetail f = new CommentDetail();
 
         // Supply index input as an argument.
@@ -146,7 +145,7 @@ public class CommentDetail extends Fragment{
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         comment_id = getArguments() != null ? getArguments().getInt("comment_id") : 0;
     }

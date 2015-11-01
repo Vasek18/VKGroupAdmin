@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL{
 
     SharedPreferences sPref;
 
-    private static final String BACK_STACK_TAG = "vkgaStack";
+    private static final String BACK_STACK_TAG = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL{
         // подключаем бд
         vkgaBD = new BD(this);
         vkgaBD.open();
+
+//        vkgaBD.getTableInfo("comments");
 
         // скачиваем картинки
 //        vkgaBD.downloadImages("groups", "ava");

@@ -28,7 +28,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     BD vkgaBD;
 
-    private static final String BACK_STACK_TAG = "vkgaStack";
+    private static final String BACK_STACK_TAG = null;
 
     ListView groupsOnMainContainer;
 

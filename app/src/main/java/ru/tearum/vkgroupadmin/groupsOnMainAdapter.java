@@ -52,11 +52,25 @@ public class groupsOnMainAdapter extends SimpleCursorAdapter{
         TextView tvName = (TextView) v.findViewById(R.id.tvName);
         TextView tvNewsCount = (TextView) v.findViewById(R.id.tvNewsCount);
 
+        Integer vk_id = null;
         if (c != null){
             String ava = c.getString(c.getColumnIndex("ava"));
             String name = c.getString(c.getColumnIndex("name"));
             String active = c.getString(c.getColumnIndex("active"));
-            String vk_id = c.getString(c.getColumnIndex("vk_id"));
+            vk_id = c.getInt(c.getColumnIndex("vk_id"));
+        }
+
+        if (vk_id != null){
+            Integer count = db.countNewComments(vk_id);
+            if (count > 0){
+                tvNewsCount.setText("+" + count);
+            }
+            else{
+                Log.d(LOG_TAG, "Нет комментов " + vk_id);
+            }
+        }
+        else{
+            Log.d(LOG_TAG, "Бракованная");
         }
     }
 
