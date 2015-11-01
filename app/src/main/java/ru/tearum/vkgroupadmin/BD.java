@@ -159,6 +159,16 @@ public class BD{
         return (int) vkgaBD.insert("comments", null, cv);
     }
 
+    // комментарии группы
+    // todo по айдишнику группы фильтровать
+    public Cursor getGroupComments(Integer group_id){
+        String table = "comments as C";
+        String columns[] = {"C." + COLUMN_ID + " as " + COLUMN_ID + "", "C.user_name as user_name", "C.text as text", "C.date as date"};
+        String selection = "C.group_id > ?";
+        String[] selectionArgs = {String.valueOf(group_id)};
+        return vkgaBD.query(table, columns, selection, selectionArgs, null, null, null);
+    }
+
     // класс для работы с БД
     class DBHelper extends SQLiteOpenHelper{
 
@@ -200,7 +210,6 @@ public class BD{
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion){
-
         }
     }
 

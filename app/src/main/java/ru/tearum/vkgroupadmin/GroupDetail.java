@@ -1,6 +1,10 @@
 package ru.tearum.vkgroupadmin;
 
 
+import android.app.LoaderManager;
+import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -9,17 +13,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 
-public class GroupDetail extends Fragment{
+public class GroupDetail extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String LOG_TAG = "myLogs";
 
-    SimpleCursorAdapter scAdapter;
+    SimpleCursorAdapter gcAdapter;
     BD vkgaBD;
 
-    public Integer group_id;
+    public static Integer group_id;
 
     Integer vkid;
     String ownerName;
@@ -28,6 +33,9 @@ public class GroupDetail extends Fragment{
 
     TextView tvName;
 
+    ListView commentsContainer;
+
+    private static final int URL_LOADER = 1;
 
     public static GroupDetail newInstance(Integer id){
         GroupDetail f = new GroupDetail();
@@ -72,6 +80,19 @@ public class GroupDetail extends Fragment{
             }
         }
 
+        // вывод комментариев группы
+        // формируем столбцы сопоставления
+        String[] from = new String[] {"user_name", "text", "date"};
+        int[] to = new int[] {R.id.tvUserName, R.id.tvText, R.id.tvDate};
+
+        // создаем адаптер и настраиваем список
+        gcAdapter = new groupCommentsAdapter(getActivity(), R.layout.group_comments_item, null, from, to, 0);
+        commentsContainer = (ListView) v.findViewById(R.id.commentsList);
+        commentsContainer.setAdapter(gcAdapter);
+
+        // создаем лоадер для чтения данных
+        getLoaderManager().initLoader(URL_LOADER, null, this);
+
         return v;
     }
 
@@ -79,6 +100,39 @@ public class GroupDetail extends Fragment{
     public void onDestroyView(){
         super.onDestroyView();
         vkgaBD.close();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args){
+        return new gcCursorLoader(getActivity(), vkgaBD);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data){
+        gcAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader){
+
+    }
+
+    static class gcCursorLoader extends CursorLoader{
+
+        BD db;
+
+        public gcCursorLoader(Context context, BD db) {
+            super(context);
+            this.db = db;
+        }
+
+        @Override
+        public Cursor loadInBackground() {
+            Cursor cursor = db.getGroupComments(group_id);
+
+            return cursor;
+        }
+
     }
 
 }
