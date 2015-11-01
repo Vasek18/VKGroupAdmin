@@ -54,6 +54,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (isIDAndTokenInPrefs()){
             // идём на главное активити
             Intent intent = new Intent(getBaseContext(), MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
             startActivity(intent);
         }
 
@@ -195,6 +196,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         // идём на главное активити
         Intent intent = new Intent(getBaseContext(), MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         startActivity(intent);
     }
 

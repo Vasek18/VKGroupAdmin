@@ -3,36 +3,26 @@ package ru.tearum.vkgroupadmin;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.Window;
 import android.widget.TextView;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.iid.InstanceID;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKApi;
-import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 
 import ru.tearum.vkgroupadmin.MainFragment.OnMainFragmentIL;
 
 
-public class MainActivity extends AppCompatActivity implements OnMainFragmentIL {
+public class MainActivity extends AppCompatActivity implements OnMainFragmentIL{
 
     private static final String LOG_TAG = "myLogs";
     TextView tvName;
@@ -45,8 +35,10 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
 
     SharedPreferences sPref;
 
+    private static final String BACK_STACK_TAG = "vkgaStack";
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); // на весь экран
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -56,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
         Integer comment_id = null;
         if (savedInstanceState == null){
             Bundle extras = getIntent().getExtras();
-            if(extras != null) {
+            if (extras != null){
                 comment_id = extras.getInt("comment_id");
             }
         }
@@ -71,13 +63,13 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
         // подключаем фрагмент
         if (comment_id != null){
             mainFrag = new CommentDetail();
-        }
-        else{
+        } else{
             mainFrag = new MainFragment();
         }
 
         fTrans = getFragmentManager().beginTransaction();
         fTrans.add(R.id.frgmCont, mainFrag);
+        fTrans.addToBackStack(BACK_STACK_TAG); // добавляем в стек (для кнопки назад)
         fTrans.commit();
 
         // зачем каждый раз имя получать?
@@ -145,26 +137,26 @@ public class MainActivity extends AppCompatActivity implements OnMainFragmentIL 
 //I don't really believe in progress
                 }
             });
-        }else{
+        } else{
             // ставим имя в шапку
             tvName.setText(name);
         }
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>(){
             @Override
             // Пользователь успешно авторизовался
-            public void onResult(VKAccessToken res) {
+            public void onResult(VKAccessToken res){
                 VK_USER_ID = res.userId;
             }
 
             @Override
-            public void onError(VKError error) {
+            public void onError(VKError error){
 // Произошла ошибка авторизации (например, пользователь запретил авторизацию)
             }
-        })) {
+        })){
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
