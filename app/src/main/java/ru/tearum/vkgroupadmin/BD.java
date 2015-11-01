@@ -133,6 +133,15 @@ public class BD{
 
     }
 
+    public Cursor getGroupDetail(Integer id){
+        String table = "groups as G";
+        String columns[] = {"G.name as name"};
+        String selection = "_id = ?";
+        String[] selectionArgs = {String.valueOf(id)};
+        return vkgaBD.query(table, columns, selection, selectionArgs, null, null, null);
+
+    }
+
     // добавление коммента
     public Integer addComment(Integer user_id, Integer group_id, String text, Integer type, Integer related_id, Integer vkID, String user_name, String date){
         Log.d(LOG_TAG, "addComment " + user_id + " " + group_id + " " + type + " " + related_id + " " + vkID + " " + user_name);

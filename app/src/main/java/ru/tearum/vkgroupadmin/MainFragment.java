@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.support.v4.widget.SimpleCursorAdapter;
@@ -26,6 +27,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     groupsOnMainAdapter gomAdapter;
 
     BD vkgaBD;
+
+    private static final String BACK_STACK_TAG = "vkgaStack";
 
     ListView groupsOnMainContainer;
 
@@ -70,7 +73,21 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         // создаем лоадер для чтения данных
         getLoaderManager().initLoader(URL_LOADER, null, this);
 
-        // Inflate the layout for this fragment
+        // обработчик нажатия на элемент списка
+        groupsOnMainContainer.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id){
+
+                // переход на детальную страницу чекина
+                fTrans = getFragmentManager().beginTransaction();
+                GroupDetail groupDetailFragment = GroupDetail.newInstance((int) id);
+                fTrans.replace(R.id.frgmCont, groupDetailFragment);
+                fTrans.addToBackStack(BACK_STACK_TAG); // добавляем в стек (для кнопки назад)
+                fTrans.commit();
+
+            }
+        });
+
         return v;
     }
 

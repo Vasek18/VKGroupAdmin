@@ -151,4 +151,9 @@ public class CommentDetail extends Fragment{
         comment_id = getArguments() != null ? getArguments().getInt("comment_id") : 0;
     }
 
+    @Override
+    public void onDestroyView(){
+        super.onDestroyView();
+        vkgaBD.close();
+    }
 }
