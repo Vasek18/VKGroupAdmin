@@ -131,6 +131,21 @@ public class BD{
 
     }
 
+    // добавление коммента
+    public Integer addComment(Integer user_id, Integer group_id, String text, Integer type, Integer related_id, Integer vkID, String user_name){
+        Log.d(LOG_TAG, "addComment " + user_id + " " + group_id + " " + type + " " + related_id + " " + vkID + " " + user_name);
+        ContentValues cv = new ContentValues();
+        cv.clear();
+        cv.put(COLUMN_VK_ID, vkID);
+        cv.put("group_id", group_id);
+        cv.put("type", type);
+        cv.put("user_id", user_id);
+        cv.put("user_name", user_name);
+        cv.put("related_id", related_id);
+
+        return (int) vkgaBD.insert("comments", null, cv);
+    }
+
     // класс для работы с БД
     class DBHelper extends SQLiteOpenHelper{
 

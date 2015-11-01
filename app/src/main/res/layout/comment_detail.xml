@@ -4,7 +4,8 @@
     android:layout_height="match_parent"
     tools:context="ru.tearum.vkgroupadmin.CommentDetail"
     android:orientation="vertical"
-    android:background="#000000">
+    android:background="#000000"
+    android:weightSum="1">
 
 
     <RelativeLayout
@@ -79,15 +80,13 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textMultiLine"
         android:ems="10"
         android:id="@+id/mtvAnswer"
-        android:text="Ответ"
+        android:hint="Ответ"
         android:background="#eeeeee"
         android:layout_margin="20dp"
         android:padding="10dp"
-        android:textIsSelectable="false"
-        android:enabled="false" />
+        android:layout_weight="0.27" />
 
     <Button
         android:layout_width="wrap_content"

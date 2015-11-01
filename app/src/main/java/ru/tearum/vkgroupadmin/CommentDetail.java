@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class CommentDetail extends Fragment{
@@ -31,6 +32,8 @@ public class CommentDetail extends Fragment{
     Button btnImportant;
     EditText mtvAnswer;
     Button btnSend;
+
+    String newCommentText;
 
     public CommentDetail(){
         // Required empty public constructor
@@ -58,7 +61,7 @@ public class CommentDetail extends Fragment{
 
         // вывод основной инфы про коммент
 //        vkgaBD.getTableInfo("comments");
-        comment_id = 1;
+        comment_id = 3;
         Cursor c = vkgaBD.getCommentDetail(comment_id); // todo переделать на асинхронность
         if (c != null) {
             if (c.moveToFirst()) {
@@ -67,7 +70,35 @@ public class CommentDetail extends Fragment{
                 tvComment.setText(c.getString(c.getColumnIndex("text")));
                 tvCommentPlace.setText(c.getString(c.getColumnIndex("commentPlace")));
             }
+            else{
+                Log.d(LOG_TAG, "Нет такого коммента");
+            }
         }
+
+
+        // Добавление коммента
+        btnSend.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                newCommentText = mtvAnswer.getText().toString();
+
+                // проверка на пустоту
+                if ("".equals(newCommentText)) {
+                    Toast.makeText(getActivity(), R.string.error_empty_comment, Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                Integer user_id = 1; // todo текущий пользователь
+                Integer group_id = 1;
+                String text = "Ololo";
+                Integer type = 1;
+                Integer related_id = 1;
+                Integer vkID = 1;
+                String user_name = "Олег";
+                // todo обновлять список комментариев
+                Integer newCommentID = vkgaBD.addComment(user_id, group_id, text, type, related_id, vkID, user_name);
+                Log.d(LOG_TAG, "Новый коммент = " + newCommentID);
+            }
+        });
 
         return v;
     }
